@@ -3,8 +3,10 @@ import { Request, Response, NextFunction } from 'express';
 import ProductService from './service';
 
 interface IProductController {
-  listAll(_req: Request, res: Response, next: NextFunction):
-  Promise<Response<unknown, Record<string, unknown>> | undefined>
+  create: (req: Request, res: Response, next: NextFunction) =>
+  Promise<Response<unknown, Record<string, unknown>> | undefined>;
+  listAll: (_req: Request, res: Response, next: NextFunction) =>
+  Promise<Response<unknown, Record<string, unknown>> | undefined>;
 }
 
 class ProductController implements IProductController {
