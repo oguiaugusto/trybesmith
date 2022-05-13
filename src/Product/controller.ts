@@ -14,6 +14,15 @@ class ProductController implements IProductController {
     this.service = new ProductService();
   }
 
+  public create = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const product = await this.service.create(req.body);
+      return res.status(StatusCodes.CREATED).json(product);
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public listAll = async (_req: Request, res: Response, next: NextFunction) => {
     try {
       const products = await this.service.listAll();
