@@ -1,10 +1,11 @@
 import { StatusCodes } from 'http-status-codes';
 import { IUser } from './interfaces';
-import UserModel from './model';
+import UserModel, { TCredentials } from './model';
 import RequestError from '../utils/RequestError';
 
 const messages = {
   ALREADY_EXISTS: 'User already exists.',
+  INVALID_CREDENTIALS: 'Username or password invalid',
 };
 
 interface IUserService {
@@ -23,6 +24,13 @@ class UserService implements IUserService {
     if (existingUser) throw new RequestError(messages.ALREADY_EXISTS, StatusCodes.CONFLICT);
 
     const user = await this.model.create({ username, classe, level, password });
+    return user;
+  };
+
+  public getByCredentials = async ({ username, password }: TCredentials) => {
+    const user = await this.model.getByCredentials({ username, password });
+
+    if (!user) throw new RequestError(messages.INVALID_CREDENTIALS, StatusCodes.UNAUTHORIZED);
     return user;
   };
 }
