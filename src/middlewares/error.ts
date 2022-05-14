@@ -5,13 +5,22 @@ import RequestError from '../utils/RequestError';
 
 type ErrTypes = RequestError | CelebrateError;
 
+const handleCelebrateError = (err: CelebrateError, res: Response) => {
+  const { message } = err.details.entries().next().value[1].details[0];
+  const code = message.includes('must ')
+    ? StatusCodes.UNPROCESSABLE_ENTITY : StatusCodes.BAD_REQUEST;
+
+  return res.status(code).json({ message });
+};
+
 const errorMiddleware = (err: ErrTypes, _req: Request, res: Response, _next: NextFunction) => {
   if (isCelebrateError(err)) {
-    const { message } = err.details.entries().next().value[1].details[0];
-    const code = message.includes('must be')
-      ? StatusCodes.UNPROCESSABLE_ENTITY : StatusCodes.BAD_REQUEST;
+    handleCelebrateError(err, res);
+    return;
+  }
 
-    return res.status(code).json({ message });
+  if (err.name === 'JsonWebTokenError') {
+    return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Invalid token' });
   }
 
   const { status, message } = err;
