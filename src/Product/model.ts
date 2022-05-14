@@ -20,7 +20,7 @@ class ProductModel implements IProductModel {
       'INSERT INTO Trybesmith.Products (name, amount) VALUES (?, ?);',
       [name, amount],
     );
-    return { id: insertId, name, amount };
+    return { id: insertId, name, amount } as IProduct;
   };
 
   public listAll = async () => {
