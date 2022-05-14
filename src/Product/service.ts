@@ -9,7 +9,7 @@ const messages = {
 
 interface IProductService {
   create: ({ name, amount }: IProduct) => Promise<IProduct>;
-  listAll(): Promise<IProduct[]>;
+  listAll: () => Promise<IProduct[]>;
 }
 
 class ProductService implements IProductService {
@@ -27,7 +27,7 @@ class ProductService implements IProductService {
     return product;
   };
 
-  public listAll = async (): Promise<IProduct[]> => {
+  public listAll = async () => {
     const products = await this.model.listAll();
     return products;
   };
