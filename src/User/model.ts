@@ -2,9 +2,12 @@ import { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
 import { IUser } from './interfaces';
 import connection from '../models/connection';
 
+export type TCredentials = { username: string, password: string };
+
 interface IUserModel {
   create: ({ username, classe, level, password }: IUser) => Promise<IUser>;
   getByUsername: (username: string) => Promise<IUser | null>;
+  getByCredentials: ({ username, password }: TCredentials) => Promise<IUser | null>;
 }
 
 class UserModel implements IUserModel {
@@ -26,6 +29,16 @@ class UserModel implements IUserModel {
     const [user] = await this.connection.execute<RowDataPacket[]>(
       'SELECT * FROM Trybesmith.Users WHERE username = ?',
       [username],
+    );
+
+    if (!user || user.length === 0) return null;
+    return user[0] as IUser;
+  };
+
+  public getByCredentials = async ({ username, password }: TCredentials) => {
+    const [user] = await this.connection.execute<RowDataPacket[]>(
+      'SELECT * FROM Trybesmith.Users WHERE username = ? AND password = ?',
+      [username, password],
     );
 
     if (!user || user.length === 0) return null;
